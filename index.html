@@ -1,43 +1,42 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="en-GB">
 
 <head>
     <meta charset="utf-8">
     <meta content="width=device-width, initial-scale=1, shrink-to-fit=no" name="viewport">
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
     <title>CSV to HTML Table</title>
-    <meta name="author" content="Derek Eder">
+    <meta name="author" content="TCS">
     <meta content="Display any CSV file as a searchable, filterable, pretty HTML table">
-
+    <link rel="icon" type="image/x-icon" href="/favicon.ico">
     <!-- Bootstrap core CSS -->
     <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.2.1/css/bootstrap.min.css" integrity="sha384-GJzZqFGwb1QTTN6wy59ffF1BuGJpLSa9DkKMp0DgiMDm4iYMj70gZWKYbI706tWS"
         crossorigin="anonymous">
     <link rel="stylesheet" href="https://cdn.datatables.net/1.10.19/css/dataTables.bootstrap4.min.css">
+
+    <style>
+        body {
+          background-color: white;
+          font-size: 14px;
+          line-height: 1;
+        }
+    </style>
 </head>
 
 <body>
     <div class="container-fluid">
         <main class="row">
             <div class="col">
-                <h1>CSV to HTML Table</h1>
-
-                <p>Display any CSV file as a searchable, filterable, pretty HTML table. Done in 100% JavaScript. <a
-                        href="https://github.com/derekeder/csv-to-html-table">Code
-                        on GitHub</a>.</p>
-
-                <p> Here's a table of Health Clinics from the <a href="https://data.cityofchicago.org/browse?q=health%20clinic&sortBy=relevance&utf8=%E2%9C%93">City
-                        of Chicago Data Portal</a>.
-                </p>
-
+                <h4><br>Stats Viewer</h4>
+                <br>
+                <p><a href="../index.php"><b>< Back</b></a></p>
                 <div id="table-container"></div>
             </div>
         </main>
         <footer class="row">
             <div class="col">
                 <hr>
-                <p class="text-right"><a href="https://github.com/derekeder/csv-to-html-table">CSV to HTML Table</a> by
-                    <a href="http://derekeder.com">Derek
-                        Eder</a></p>
+                <p class="text-right"><a href="https://blog.llanelly.com">Powered by TCS</a></p>
             </div>
         </footer>
     </div>
@@ -49,28 +48,39 @@
     <script src="js/csv_to_html_table.js"></script>
 
     <script>
-        function format_link(link) {
-            if (link)
-                return "<a href='" + link + "' target='_blank'>" + link + "</a>";
-            else return "";
-        }
+        var cvslog = getParameterByName('log');
 
-        CsvToHtmlTable.init({
-            csv_path: "data/Health Clinics in Chicago.csv",
-            element: "table-container",
-            allow_download: true,
-            csv_options: {
-                separator: ",",
-                delimiter: '"'
-            },
-            datatables_options: {
-                paging: false
-            },
-            custom_formatting: [
-                [4, format_link]
-            ]
-        });
+        if (cvslog == null) {
+            window.location.href = "../index.php";
+        } else {
+            CsvToHtmlTable.init({
+                csv_path: "data/" + cvslog,
+                element: "table-container",
+                allow_download: false,
+                csv_options: {separator: ",",delimiter: '"'},
+                datatables_options: {paging: false},
+                custom_formatting: [[4, format_link]]
+            });
+        }
+        
+        function format_link(link) {
+            if (link && link != "NULL") {
+                console.log(link);
+                if (!/^https?:\/\//i.test(link)) {
+                    link = 'https://' + link;
+                }
+                return "<a href='" + link + "' target='_blank'>" + link + "</a>";
+            } else {return "";
+        }}
+
+        function getParameterByName(name, url = window.location.href) {
+            name = name.replace(/[\[\]]/g, '\\$&');
+            var regex = new RegExp('[?&]' + name + '(=([^&#]*)|&|#|$)'),
+            results = regex.exec(url);
+            if (!results) return null;
+            if (!results[2]) return '';
+            return decodeURIComponent(results[2].replace(/\+/g, ' '));
+        };
     </script>
 </body>
-
 </html>
